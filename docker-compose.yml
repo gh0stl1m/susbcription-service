@@ -1,0 +1,41 @@
+version: "3.7"
+
+volumes:
+  postgres: {}
+  redis: {}
+
+services:
+  postgres:
+    image: postgres:15.3-alpine3.18
+    restart: unless-stopped
+    stop_signal: SIGINT
+    environment:
+      LC_ALL: "C.UTF-8"
+      POSTGRES_DB: "subscriptions"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "${PG_PASSWD:-postgres}"
+    ports:
+    - "${PG_PORT:-5432}:5432"
+    volumes:
+    - "postgres:/var/lib/postgresql/data"
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    stop_signal: SIGINT
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+    - "redis:/data"
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: unless-stopped
+    stop_signal: SIGINT
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+networks:
+  default:
+    name: subscription-service

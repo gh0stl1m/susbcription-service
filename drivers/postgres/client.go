@@ -6,10 +6,12 @@ import (
 	"os"
 	"time"
 
-  _ "github.com/jackc/pgconn"
-  _ "github.com/jackc/pgx/v4"
-  _ "github.com/jackc/pgx/v4/stdlib"
+	_ "github.com/jackc/pgconn"
+	_ "github.com/jackc/pgx/v4"
+	_ "github.com/jackc/pgx/v4/stdlib"
 
+	postgresDriver "gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 
@@ -54,16 +56,18 @@ func connect() *sql.DB {
 
 func openConnection(dsn string) (*sql.DB, error) {
 
-  db, err := sql.Open("pgx", dsn)
+  dbconn, err := gorm.Open(postgresDriver.New(postgresDriver.Config{
+    DSN: dsn,
+  }), &gorm.Config{})
 
   if err != nil {
 
     return nil, err
   }
-  
-  err = db.Ping()
-  
-  if err != nil {
+
+  db, _ := dbconn.DB()
+
+  if err := db.Ping(); err != nil {
 
     log.Println("Ping command failed")
 

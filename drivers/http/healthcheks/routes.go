@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/gh0stl1m/subscription-service/drivers/shared"
+	"github.com/go-chi/chi/v5"
 )
 
 type HealthCheckCtx struct {

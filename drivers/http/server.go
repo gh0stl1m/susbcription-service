@@ -1,7 +1,6 @@
 package http
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,11 +10,12 @@ import (
 	"syscall"
 
 	"github.com/alexedwards/scs/v2"
+	"gorm.io/gorm"
 )
 
 type Config struct {
   Session *scs.SessionManager
-  DB *sql.DB
+  DB *gorm.DB
   InfoLog *log.Logger
   ErrorLog *log.Logger
   Wait *sync.WaitGroup

@@ -1,15 +1,15 @@
 package healthcheks
 
 import (
-	"database/sql"
 	"log"
 
 	"github.com/gh0stl1m/subscription-service/drivers/shared"
 	"github.com/go-chi/chi/v5"
+	"gorm.io/gorm"
 )
 
 type HealthCheckCtx struct {
-  DB *sql.DB
+  DB *gorm.DB
   InfoLog *log.Logger
   ErrorLog *log.Logger
 }

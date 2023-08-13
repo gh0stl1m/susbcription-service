@@ -14,7 +14,9 @@ func (hr *HealthCheckCtx) LivenessHandler(w http.ResponseWriter, r *http.Request
   responseMessage := LivenessResponse { Message: "Server Running" }
   w.Header().Set("Content-Type", "application/json")
 
-  if err := hr.DB.Ping(); err != nil {
+  db, _ := hr.DB.DB()
+
+  if err := db.Ping(); err != nil {
 
     hr.ErrorLog.Println("Something went wrong with database ping", err)
 

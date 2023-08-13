@@ -1,7 +1,6 @@
 package postgres
 
 import (
-	"database/sql"
 	"log"
 	"os"
 	"time"
@@ -15,7 +14,7 @@ import (
 )
 
 
-func NewConnection() *sql.DB {
+func NewConnection() *gorm.DB {
 
   conn := connect()
 
@@ -27,7 +26,7 @@ func NewConnection() *sql.DB {
   return conn
 }
 
-func connect() *sql.DB {
+func connect() *gorm.DB {
 
   retry := 0
 
@@ -54,7 +53,7 @@ func connect() *sql.DB {
   }
 }
 
-func openConnection(dsn string) (*sql.DB, error) {
+func openConnection(dsn string) (*gorm.DB, error) {
 
   dbconn, err := gorm.Open(postgresDriver.New(postgresDriver.Config{
     DSN: dsn,
@@ -74,7 +73,7 @@ func openConnection(dsn string) (*sql.DB, error) {
     return nil, err
   }
 
-  return db, nil
+  return dbconn, nil
 }
 
 

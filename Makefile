@@ -1,6 +1,7 @@
 BINARY_NAME=subscription-service
 POSTGRES_DSN="user=postgres password=postgres dbname=subscriptions host=localhost port=5432 sslmode=disable"
 REDIS_URI="127.0.0.1:6379"
+SERVER_PORT=3000
 
 build:
 	@echo "Building..."
@@ -9,7 +10,7 @@ build:
 
 run: build
 	@echo "Starting application..."
-	@env POSTGRES_DSN=${POSTGRES_DSN} REDIS_URI=${REDIS_URI} ./${BINARY_NAME} &
+	@env SERVER_PORT=${SERVER_PORT} POSTGRES_DSN=${POSTGRES_DSN} REDIS_URI=${REDIS_URI} ./${BINARY_NAME}
 	@echo "Application started"
 
 clean:

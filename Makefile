@@ -27,5 +27,15 @@ stop:
 
 restart: stop start
 
+migrations-up:
+	@echo "Running migrations up..."
+	@migrate -source file://drivers/postgres/migrations -database postgres://postgres:postgres@localhost:5432/subscriptions?sslmode=disable up
+	@echo "Migrations run successfully"
+
+migrations-down:
+	@echo "Running migrations down..."
+	@migrate -source file://drivers/postgres/migrations -database postgres://postgres:postgres@localhost:5432/subscriptions?sslmode=disable down
+	@echo "Migrations run successfully"
+
 test:
 	go test -v ./...

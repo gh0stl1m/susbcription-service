@@ -1,0 +1,2 @@
+DROP SCHEMA IF EXISTS subscriptions;
+DROP EXTENSION IF EXISTS "uuid-ossp";

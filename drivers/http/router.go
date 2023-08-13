@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gh0stl1m/subscription-service/drivers/http/healthcheks"
+	"github.com/gh0stl1m/subscription-service/drivers/http/auth"
 	"github.com/gh0stl1m/subscription-service/drivers/shared"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -23,8 +24,11 @@ func (app *Config) Router() http.Handler {
     },
   )
 
+  authRouter := auth.NewAuthRouter(auth.AuthCtx{})
+
   configurers := []shared.RouteConfigurer{
     healtcheckRouter,
+    authRouter,
   }
 
   for _, configurer := range configurers {

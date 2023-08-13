@@ -6,7 +6,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 
 	"github.com/alexedwards/scs/v2"
 )
@@ -34,5 +36,24 @@ func (app *Config) Run() {
 
     log.Panic("Something went wrong running server", err)
   }
+}
+
+func (app *Config) gracefulShutdown() {
+
+  app.InfoLog.Println("Got graceful shutdown. Cleaning up pending tasks...")
+
+  app.Wait.Wait()
+
+  app.InfoLog.Println("Closing channels and shutting down application")
+}
+
+func (app *Config) ListenForShutdown() {
+
+  quit := make(chan os.Signal, 1)
+  signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+  <-quit
+
+  app.gracefulShutdown()
+  os.Exit(0)
 }
 

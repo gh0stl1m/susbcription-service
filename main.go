@@ -23,5 +23,7 @@ func main() {
     Wait: &wg,
   }
 
+  go app.ListenForShutdown()
+  
   app.Run()
 }

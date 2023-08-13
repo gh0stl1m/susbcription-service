@@ -10,13 +10,12 @@ build:
 
 run: build
 	@echo "Starting application..."
-	@env SERVER_PORT=${SERVER_PORT} POSTGRES_DSN=${POSTGRES_DSN} REDIS_URI=${REDIS_URI} ./${BINARY_NAME}
+	@env SERVER_PORT=${SERVER_PORT} POSTGRES_DSN=${POSTGRES_DSN} REDIS_URI=${REDIS_URI} ./${BINARY_NAME} &
 	@echo "Application started"
 
 clean:
 	@echo "Cleaning application..."
 	@go clean
-	@rm ./${BINARY_NAME}
 	@echo "Cleaned"
 
 start: run

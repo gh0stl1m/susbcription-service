@@ -14,6 +14,7 @@ func (app *Config) Router() http.Handler {
   mux := chi.NewRouter()
 
   mux.Use(middleware.Recoverer)
+  mux.Use(app.LoadSession)
 
   healtcheckRouter := healthcheks.NewHealthcheckRouter(healthcheks.HealthCheckCtx {
       DB: app.DB,

@@ -15,10 +15,9 @@ type User struct {
 }
 
 type UserRepository interface {
-  Insert(user User) (string, error)
-  FindOne(id string) (*User, error)
+  Insert(user User) error
   Find() ([]*User, error)
-  FindByEmail(email string) (*User, error)
+  FindOneBy(conditions User) (*User, error)
   DeleteById(id string) error
-  ResetPassword(password string) error
+  Update(columnsToChange User) error
 }

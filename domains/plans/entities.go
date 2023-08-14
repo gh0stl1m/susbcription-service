@@ -2,7 +2,6 @@ package plans
 
 import (
   "time"
-  "github.com/gh0stl1m/subscription-service/domains/users"
 )
 
 type Plan struct {
@@ -14,7 +13,7 @@ type Plan struct {
 }
 
 type PlanRepository interface {
-  FindOne(id string) (*Plan, error)
+  FindOneBy(condition Plan) (*Plan, error)
   Find() ([]*Plan, error)
-  SubscribeUserToPlan(user users.User, plan Plan) error
+  SubscribeUserToPlan(userId, planId string) error
 }

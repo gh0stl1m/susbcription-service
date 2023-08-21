@@ -14,10 +14,16 @@ type User struct {
   UpdatedAt time.Time
 }
 
-type UserRepository interface {
+type IUserRepository interface {
   Insert(user User) error
   Find() ([]*User, error)
   FindOneBy(conditions User) (*User, error)
   DeleteById(id string) error
   Update(columnsToChange User) error
+}
+
+type UserUseCases interface {
+  ResetPassword(password string) error
+  PasswordMatches(plainText string) (bool, string)
+  FindOneByEmail(email string) (*User, error)
 }

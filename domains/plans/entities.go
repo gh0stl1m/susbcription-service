@@ -12,7 +12,7 @@ type Plan struct {
   UpdatedAt time.Time
 }
 
-type PlanRepository interface {
+type IPlanRepository interface {
   FindOneBy(condition Plan) (*Plan, error)
   Find() ([]*Plan, error)
   SubscribeUserToPlan(userId, planId string) error

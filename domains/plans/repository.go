@@ -1,23 +1,21 @@
-package postgres
+package plans
 
 import (
   "gorm.io/gorm"
-  planDomain "github.com/gh0stl1m/subscription-service/domains/plans"
-  userDomain "github.com/gh0stl1m/subscription-service/domains/users"
 )
 
 type PlanRepository struct {
   db *gorm.DB
 }
 
-func NewPlanRepository(db *gorm.DB) planDomain.PlanRepository {
+func NewPlanRepository(db *gorm.DB) IPlanRepository {
 
   return &PlanRepository{ db }
 }
 
-func (pr *PlanRepository) FindOneBy(condition planDomain.Plan) (*planDomain.Plan, error) {
+func (pr *PlanRepository) FindOneBy(condition Plan) (*Plan, error) {
 
-  plan := planDomain.Plan{}
+  plan := Plan{}
 
   result := pr.db.Model(condition).First(&plan)
 
@@ -29,9 +27,9 @@ func (pr *PlanRepository) FindOneBy(condition planDomain.Plan) (*planDomain.Plan
   return &plan, nil
 }
 
-func (pr *PlanRepository) Find() ([]*planDomain.Plan, error) {
+func (pr *PlanRepository) Find() ([]*Plan, error) {
 
-  plans := []*planDomain.Plan{}
+  plans := []*Plan{}
 
   result := pr.db.Find(&plans)
 
@@ -55,4 +53,3 @@ func (pr *PlanRepository) SubscribeUserToPlan(userId, planId string) error {
 
   return nil
 }
-

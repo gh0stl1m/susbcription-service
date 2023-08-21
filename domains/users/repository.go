@@ -1,7 +1,6 @@
-package postgres
+package users
 
 import (
-	userDomain "github.com/gh0stl1m/subscription-service/domains/users"
 	"gorm.io/gorm"
 )
 
@@ -9,21 +8,21 @@ type UserRepository struct {
   db *gorm.DB
 }
 
-func NewUserRespository(db *gorm.DB) userDomain.UserRepository {
+func NewUserRespository(db *gorm.DB) IUserRepository {
 
   return &UserRepository { db }
 }
 
-func (ur *UserRepository) Insert(user userDomain.User) error  {
+func (ur *UserRepository) Insert(user User) error  {
 
   result := ur.db.Create(&user)
 
   return result.Error
 }
 
-func (ur *UserRepository) Find() ([]*userDomain.User, error) {
+func (ur *UserRepository) Find() ([]*User, error) {
 
-  users := []*userDomain.User{}
+  users := []*User{}
 
   result := ur.db.Find(&users)
 
@@ -35,9 +34,9 @@ func (ur *UserRepository) Find() ([]*userDomain.User, error) {
   return users, nil
 }
 
-func (ur *UserRepository) FindOneBy(conditions userDomain.User) (*userDomain.User, error) {
+func (ur *UserRepository) FindOneBy(conditions User) (*User, error) {
 
-  user := userDomain.User{}
+  user := User{}
 
   result := ur.db.Model(conditions).First(&user)
 
@@ -51,7 +50,7 @@ func (ur *UserRepository) FindOneBy(conditions userDomain.User) (*userDomain.Use
 
 func (ur *UserRepository) DeleteById(id string) error {
   
-  user := userDomain.User{}
+  user := User{}
 
   result := ur.db.Delete(&user, id)
 
@@ -63,9 +62,9 @@ func (ur *UserRepository) DeleteById(id string) error {
   return nil
 }
 
-func (ur *UserRepository) Update(columnsToChange userDomain.User) error {
+func (ur *UserRepository) Update(columnsToChange User) error {
 
-  user := userDomain.User{}
+  user := User{}
 
   result := ur.db.Model(&user).Updates(columnsToChange)
 

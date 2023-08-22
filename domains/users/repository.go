@@ -62,9 +62,9 @@ func (ur *UserRepository) DeleteById(id string) error {
   return nil
 }
 
-func (ur *UserRepository) Update(columnsToChange User) error {
+func (ur *UserRepository) Update(id string, columnsToChange User) error {
 
-  user := User{}
+  user := User{ ID: id }
 
   result := ur.db.Model(&user).Updates(columnsToChange)
 

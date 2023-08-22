@@ -4,7 +4,7 @@ import "time"
 
 type User struct {
   ID string `gorm:"primaryKey"`
-  Email string
+  Email string 
   FirstName string
   LastName string
   Password string
@@ -19,11 +19,11 @@ type IUserRepository interface {
   Find() ([]*User, error)
   FindOneBy(conditions User) (*User, error)
   DeleteById(id string) error
-  Update(columnsToChange User) error
+  Update(id string, columnsToChange User) error
 }
 
-type UserUseCases interface {
-  ResetPassword(password string) error
-  PasswordMatches(plainText string) (bool, string)
+type IUserService interface {
+  ResetPassword(id, password string) error
+  PasswordMatches(hash, plainText string) bool
   FindOneByEmail(email string) (*User, error)
 }

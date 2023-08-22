@@ -12,9 +12,9 @@ type UserServices struct {
 	ErrorLog   *log.Logger
 }
 
-func NewUserService(repository IUserRepository) IUserService {
+func NewUserService(repository IUserRepository, infoLog, errorLog *log.Logger) IUserService {
 
-	return &UserServices{repository}
+	return &UserServices{Repository: repository, InfoLog: infoLog, ErrorLog: errorLog}
 }
 
 func (us *UserServices) FindOneByEmail(email string) (*User, error) {
@@ -28,43 +28,36 @@ func (us *UserServices) FindOneByEmail(email string) (*User, error) {
 		return nil, err
 	}
 
-
 	return user, err
 }
 
 func (us *UserServices) PasswordMatches(hash, plainText string) bool {
 
-  err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(plainText))
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(plainText))
 
-  if err != nil {
-
-    return false
-  }
-
-  return true
+  return err == nil
 }
 
 func (us *UserServices) ResetPassword(id, password string) error {
 
-  hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
-  
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
+
 	if err != nil {
 
-    us.ErrorLog.Println("Error hashing passoword")
-    
+		us.ErrorLog.Println("Error hashing passoword")
+
 		return err
 	}
-  condition := User{ Password: string(hashedPassword) }
+	condition := User{Password: string(hashedPassword)}
 
-  result := us.Repository.Update(id, condition)
+	result := us.Repository.Update(id, condition)
 
-  if result != nil {
-    
-    us.ErrorLog.Println("Error updating user")
+	if result != nil {
 
-    return result
-  }
+		us.ErrorLog.Println("Error updating user")
 
-  return nil
+		return result
+	}
+
+	return nil
 }
-

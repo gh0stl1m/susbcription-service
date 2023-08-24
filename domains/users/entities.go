@@ -1,29 +1,43 @@
 package users
 
-import "time"
+import (
+	"time"
+
+	uuid "github.com/satori/go.uuid"
+)
 
 type User struct {
-  ID string `gorm:"primaryKey"`
+  ID uuid.UUID `gorm:"type:uuid;primary_key;"`
   Email string 
   FirstName string
   LastName string
   Password string
-  Active uint
+  UserActive uint
   IsAdmin uint
   CreatedAt time.Time
   UpdatedAt time.Time
 }
 
+type UserDTO struct {
+  Email string `json:"email"`
+  FirstName string `json:"firstName"`
+  LastName string `json:"lastName"`
+  Active uint `json:"active,omitempty"`
+  Password string `json:"password"`
+  IsAdmin uint `json:"isAdmin"`
+}
+
 type IUserRepository interface {
-  Insert(user User) error
+  Insert(user UserDTO) error
   Find() ([]*User, error)
   FindOneBy(conditions User) (*User, error)
-  DeleteById(id string) error
-  Update(id string, columnsToChange User) error
+  DeleteById(id uuid.UUID) error
+  Update(id uuid.UUID, columnsToChange User) error
 }
 
 type IUserService interface {
-  ResetPassword(id, password string) error
+  Create(user UserDTO) error
+  ResetPassword(id uuid.UUID, password string) error
   PasswordMatches(hash, plainText string) bool
   FindOneByEmail(email string) (*User, error)
 }

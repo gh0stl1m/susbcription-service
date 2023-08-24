@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"golang.org/x/crypto/bcrypt"
+	uuid "github.com/satori/go.uuid"
 )
 
 type UserServices struct {
@@ -15,6 +16,22 @@ type UserServices struct {
 func NewUserService(repository IUserRepository, infoLog, errorLog *log.Logger) IUserService {
 
 	return &UserServices{Repository: repository, InfoLog: infoLog, ErrorLog: errorLog}
+}
+
+func (us *UserServices) Create(user UserDTO) error {
+
+  passwordHashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
+
+  if err != nil {
+
+    us.ErrorLog.Println("Error hashing password")
+
+    return err
+  }
+
+  user.Password = string(passwordHashed)
+
+  return us.Repository.Insert(user)
 }
 
 func (us *UserServices) FindOneByEmail(email string) (*User, error) {
@@ -38,7 +55,7 @@ func (us *UserServices) PasswordMatches(hash, plainText string) bool {
   return err == nil
 }
 
-func (us *UserServices) ResetPassword(id, password string) error {
+func (us *UserServices) ResetPassword(id uuid.UUID, password string) error {
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 

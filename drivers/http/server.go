@@ -10,8 +10,13 @@ import (
 	"syscall"
 
 	"github.com/alexedwards/scs/v2"
+  "github.com/gh0stl1m/subscription-service/domains/users"
 	"gorm.io/gorm"
 )
+
+type httpServices struct {
+  UserService users.IUserService
+}
 
 type Config struct {
   Session *scs.SessionManager

@@ -3,11 +3,14 @@ package http
 import (
 	"net/http"
 
-	"github.com/gh0stl1m/subscription-service/drivers/http/healthcheks"
-	"github.com/gh0stl1m/subscription-service/drivers/http/auth"
-	"github.com/gh0stl1m/subscription-service/drivers/shared"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+  
+  "github.com/gh0stl1m/subscription-service/drivers/http/healthcheks"
+	"github.com/gh0stl1m/subscription-service/drivers/http/auth"
+	"github.com/gh0stl1m/subscription-service/domains/users"
+	"github.com/gh0stl1m/subscription-service/drivers/shared"
+
 )
 
 func (app *Config) Router() http.Handler {
@@ -24,7 +27,14 @@ func (app *Config) Router() http.Handler {
     },
   )
 
-  authRouter := auth.NewAuthRouter(auth.AuthCtx{})
+  userRepository := users.NewUserRespository(app.DB)
+  userService := users.NewUserService(userRepository, app.InfoLog, app.ErrorLog)
+
+  authRouter := auth.NewAuthRouter(auth.AuthCtx{
+    UserServices: userService,
+    InfoLog: app.InfoLog,
+    ErrorLog: app.ErrorLog,
+  })
 
   configurers := []shared.RouteConfigurer{
     healtcheckRouter,

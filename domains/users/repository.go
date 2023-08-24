@@ -1,6 +1,7 @@
 package users
 
 import (
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
@@ -13,9 +14,19 @@ func NewUserRespository(db *gorm.DB) IUserRepository {
   return &UserRepository { db }
 }
 
-func (ur *UserRepository) Insert(user User) error  {
+func (ur *UserRepository) Insert(user UserDTO) error  {
 
-  result := ur.db.Create(&user)
+  newUser := User{
+    ID: uuid.NewV4(),
+    Email: user.Email,
+    FirstName: user.FirstName,
+    LastName: user.LastName,
+    Password: user.Password,
+    UserActive: user.Active,
+    IsAdmin: user.IsAdmin,
+  }
+
+  result := ur.db.Create(&newUser)
 
   return result.Error
 }
@@ -48,7 +59,7 @@ func (ur *UserRepository) FindOneBy(conditions User) (*User, error) {
   return &user, nil
 }
 
-func (ur *UserRepository) DeleteById(id string) error {
+func (ur *UserRepository) DeleteById(id uuid.UUID) error {
   
   user := User{}
 
@@ -62,7 +73,7 @@ func (ur *UserRepository) DeleteById(id string) error {
   return nil
 }
 
-func (ur *UserRepository) Update(id string, columnsToChange User) error {
+func (ur *UserRepository) Update(id uuid.UUID, columnsToChange User) error {
 
   user := User{ ID: id }
 

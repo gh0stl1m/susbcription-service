@@ -1,10 +1,13 @@
 package users
 
 import (
+	"fmt"
 	"log"
 
-	"golang.org/x/crypto/bcrypt"
 	uuid "github.com/satori/go.uuid"
+	"golang.org/x/crypto/bcrypt"
+
+  "github.com/gh0stl1m/subscription-service/utils"
 )
 
 type UserServices struct {
@@ -20,39 +23,39 @@ func NewUserService(repository IUserRepository, infoLog, errorLog *log.Logger) I
 
 func (us *UserServices) Create(user UserDTO) error {
 
-  passwordHashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
-
-  if err != nil {
-
-    us.ErrorLog.Println("Error hashing password")
-
-    return err
-  }
-
-  user.Password = string(passwordHashed)
-
-  return us.Repository.Insert(user)
-}
-
-func (us *UserServices) FindOneByEmail(email string) (*User, error) {
-
-	user, err := us.Repository.FindOneBy(User{Email: email})
+	userData, err := us.Repository.FindOneBy(User{Email: user.Email}, []string{"id"})
 
 	if err != nil {
 
-		us.ErrorLog.Println("Something went wrong reading user")
+		us.ErrorLog.Println("Error checking user")
 
-		return nil, err
+		return err
 	}
 
-	return user, err
+	if userData != nil {
+
+    return fmt.Errorf("%w", utils.ErrUserAlreadyExists)
+	}
+
+	passwordHashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
+
+	if err != nil {
+
+		us.ErrorLog.Println("Error hashing password")
+
+		return err
+	}
+
+	user.Password = string(passwordHashed)
+
+	return us.Repository.Insert(user)
 }
 
 func (us *UserServices) PasswordMatches(hash, plainText string) bool {
 
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(plainText))
 
-  return err == nil
+	return err == nil
 }
 
 func (us *UserServices) ResetPassword(id uuid.UUID, password string) error {

@@ -29,9 +29,7 @@ type UserDTO struct {
 
 type IUserRepository interface {
   Insert(user UserDTO) error
-  Find() ([]*User, error)
-  FindOneBy(conditions User) (*User, error)
-  DeleteById(id uuid.UUID) error
+  FindOneBy(conditions User, selector []string) (*User, error)
   Update(id uuid.UUID, columnsToChange User) error
 }
 
@@ -39,5 +37,4 @@ type IUserService interface {
   Create(user UserDTO) error
   ResetPassword(id uuid.UUID, password string) error
   PasswordMatches(hash, plainText string) bool
-  FindOneByEmail(email string) (*User, error)
 }

@@ -1,88 +1,67 @@
 package users
 
 import (
+	"errors"
+
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
 type UserRepository struct {
-  db *gorm.DB
+	db *gorm.DB
 }
 
 func NewUserRespository(db *gorm.DB) IUserRepository {
 
-  return &UserRepository { db }
+	return &UserRepository{db}
 }
 
-func (ur *UserRepository) Insert(user UserDTO) error  {
+func (ur *UserRepository) Insert(user UserDTO) error {
 
-  newUser := User{
-    ID: uuid.NewV4(),
-    Email: user.Email,
-    FirstName: user.FirstName,
-    LastName: user.LastName,
-    Password: user.Password,
-    UserActive: user.Active,
-    IsAdmin: user.IsAdmin,
-  }
+	newUser := User{
+		ID:         uuid.NewV4(),
+		Email:      user.Email,
+		FirstName:  user.FirstName,
+		LastName:   user.LastName,
+		Password:   user.Password,
+		UserActive: user.Active,
+		IsAdmin:    user.IsAdmin,
+	}
 
-  result := ur.db.Create(&newUser)
+	result := ur.db.Create(&newUser)
 
-  return result.Error
+	return result.Error
 }
 
-func (ur *UserRepository) Find() ([]*User, error) {
+func (ur *UserRepository) FindOneBy(conditions User, selector []string) (*User, error) {
 
-  users := []*User{}
+	user := User{}
 
-  result := ur.db.Find(&users)
+	result := ur.db.Select(selector).Where(conditions).First(&user)
 
-  if result.Error != nil {
+	if result.Error != nil {
 
-    return nil, result.Error
-  }
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 
-  return users, nil
-}
+			return nil, nil
+		}
 
-func (ur *UserRepository) FindOneBy(conditions User) (*User, error) {
+		return nil, result.Error
+	}
 
-  user := User{}
-
-  result := ur.db.Model(conditions).First(&user)
-
-  if result.Error != nil {
-
-    return nil, result.Error
-  }
-
-  return &user, nil
-}
-
-func (ur *UserRepository) DeleteById(id uuid.UUID) error {
-  
-  user := User{}
-
-  result := ur.db.Delete(&user, id)
-
-  if result.Error != nil {
-
-    return result.Error
-  }
-
-  return nil
+	return &user, nil
 }
 
 func (ur *UserRepository) Update(id uuid.UUID, columnsToChange User) error {
 
-  user := User{ ID: id }
+	user := User{ID: id}
 
-  result := ur.db.Model(&user).Updates(columnsToChange)
+	result := ur.db.Model(&user).Updates(columnsToChange)
 
-  if result.Error != nil {
+	if result.Error != nil {
 
-    return result.Error
-  }
+		return result.Error
+	}
 
-  return nil
+	return nil
 }

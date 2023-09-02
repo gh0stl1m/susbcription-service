@@ -21,6 +21,11 @@ func NewUserService(repository IUserRepository, infoLog, errorLog *log.Logger) I
 	return &UserServices{Repository: repository, InfoLog: infoLog, ErrorLog: errorLog}
 }
 
+func (us *UserServices) FindOneBy(conditions User, selector []string) (*User, error) {
+
+  return us.Repository.FindOneBy(conditions, selector)
+}
+
 func (us *UserServices) Create(user UserDTO) error {
 
 	userData, err := us.Repository.FindOneBy(User{Email: user.Email}, []string{"id"})

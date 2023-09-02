@@ -5,12 +5,12 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-  
-  "github.com/gh0stl1m/subscription-service/drivers/http/healthcheks"
-	"github.com/gh0stl1m/subscription-service/drivers/http/auth"
-	"github.com/gh0stl1m/subscription-service/domains/users"
-	"github.com/gh0stl1m/subscription-service/drivers/shared"
 
+	authDomain "github.com/gh0stl1m/subscription-service/domains/auth"
+	"github.com/gh0stl1m/subscription-service/domains/users"
+	"github.com/gh0stl1m/subscription-service/drivers/http/auth"
+	"github.com/gh0stl1m/subscription-service/drivers/http/healthcheks"
+	"github.com/gh0stl1m/subscription-service/drivers/shared"
 )
 
 func (app *Config) Router() http.Handler {
@@ -29,9 +29,11 @@ func (app *Config) Router() http.Handler {
 
   userRepository := users.NewUserRespository(app.DB)
   userService := users.NewUserService(userRepository, app.InfoLog, app.ErrorLog)
+  authService := authDomain.NewAuthServices()
 
   authRouter := auth.NewAuthRouter(auth.AuthCtx{
     UserServices: userService,
+    AuthServices: authService,
     InfoLog: app.InfoLog,
     ErrorLog: app.ErrorLog,
   })

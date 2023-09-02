@@ -35,6 +35,7 @@ type IUserRepository interface {
 
 type IUserService interface {
   Create(user UserDTO) error
+  FindOneBy(conditions User, selector []string) (*User, error)
   ResetPassword(id uuid.UUID, password string) error
   PasswordMatches(hash, plainText string) bool
 }
